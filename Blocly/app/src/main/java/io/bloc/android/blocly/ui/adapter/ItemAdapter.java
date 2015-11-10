@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,13 +46,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         return BloclyApplication.getSharedDataSource().getItems().size();
     }
 
-    class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements ImageLoadingListener, View.OnClickListener {
+    class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements ImageLoadingListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
         TextView title;
         TextView feed;
         TextView content;
         View headerWrapper;
         ImageView headerImage;
+        CheckBox archiveCheckbox;
+        CheckBox favoriteCheckbox;
         RssItem rssItem;
 
         public ItemAdapterViewHolder(View itemView) {
@@ -60,7 +64,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             content = (TextView) itemView.findViewById(R.id.tv_rss_item_content);
             headerWrapper = itemView.findViewById(R.id.fl_rss_item_image_header);
             headerImage = (ImageView) headerWrapper.findViewById(R.id.iv_rss_item_image);
+            archiveCheckbox = (CheckBox) itemView.findViewById(R.id.cb_rss_item_check_mark);
+            favoriteCheckbox = (CheckBox) itemView.findViewById(R.id.cb_rss_item_favorite_star);
             itemView.setOnClickListener(this);
+            archiveCheckbox.setOnCheckedChangeListener(this);
+            favoriteCheckbox.setOnCheckedChangeListener(this);
         }
 
         void update(RssFeed rssFeed, RssItem rssItem) {
@@ -86,6 +94,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             Toast.makeText(view.getContext(), rssItem.getTitle(), Toast.LENGTH_SHORT).show();
         }
 
+        /*
+         * OnCheckedChangedListener
+         */
+
         @Override
         public void onLoadingStarted(String imageUri, View view) {
         }
@@ -109,6 +121,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             ImageLoader.getInstance().loadImage(imageUri, this);
         }
 
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            Log.v(TAG, "Checked changed to: " + isChecked);
+
+        }
     }
 }
 
